@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/pokemon.dart';
+import '../Models/pokemon.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   final List<Pokemon> _favorites = [];

@@ -1,6 +1,5 @@
-
 import 'package:flutter/material.dart';
-import '../models/pokemon.dart';
+import '../Models/pokemon.dart';
 import '../Service/poke_api.dart';
 import '../widgets/pokemon_card.dart';
 import 'details_screen.dart';
@@ -17,6 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Pokemon> pokemons = [];
   bool loading = false;
   int offset = 0;
+  final int limit = 20;
 
   @override
   void initState() {
@@ -27,17 +27,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> fetchPokemons() async {
     setState(() => loading = true);
     try {
-      final list = await PokeApi.fetchPokemonList(offset, 20);
+      final list = await PokeApi.fetchPokemonList(offset, limit);
       setState(() {
-        pokemons.addAll(list);
-        offset += 20;
+        pokemons.addAll(list as Iterable<Pokemon>);
+        offset += limit;
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Erro: $e")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Erro: $e")),
+        );
+      }
     } finally {
-      setState(() => loading = false);
+      if (mounted) setState(() => loading = false);
     }
   }
 
@@ -61,30 +63,43 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           Expanded(
-            child: GridView.builder(
-              padding: const EdgeInsets.all(8),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, childAspectRatio: 3 / 4),
-              itemCount: pokemons.length,
-              itemBuilder: (context, index) {
-                final pokemon = pokemons[index];
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => DetailsScreen(pokemon: pokemon)),
-                    );
-                  },
-                  child: PokemonCard(pokemon: pokemon),
-                );
-              },
-            ),
+            child: pokemons.isEmpty && loading
+                ? const Center(child: CircularProgressIndicator())
+                : GridView.builder(
+                    padding: const EdgeInsets.all(8),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 3 / 4,
+                    ),
+                    itemCount: pokemons.length,
+                    itemBuilder: (context, index) {
+                      final pokemon = pokemons[index];
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  DetailsScreen(pokemon: pokemon),
+                            ),
+                          );
+                        },
+                        child: PokemonCard(pokemon: pokemon),
+                      );
+                    },
+                  ),
           ),
-          if (loading) const CircularProgressIndicator(),
-          ElevatedButton(
-            onPressed: loading ? null : fetchPokemons,
-            child: const Text("Carregar mais"),
+          if (loading) const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: CircularProgressIndicator(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ElevatedButton(
+              onPressed: loading ? null : fetchPokemons,
+              child: const Text("Carregar mais"),
+            ),
           ),
         ],
       ),
