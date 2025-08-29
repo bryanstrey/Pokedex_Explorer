@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../Providers/favorites_provider.dart';
 import '../Widgets/pokemon_card.dart';
-import 'details_screen.dart';
+import '../Screens/details_screen.dart';
 import 'package:provider/provider.dart';
 
 class FavoritesScreen extends StatelessWidget {

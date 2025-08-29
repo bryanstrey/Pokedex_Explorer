@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     try {
       final list = await PokeApi.fetchPokemonList(offset, limit);
       setState(() {
-        pokemons.addAll(list as Iterable<Pokemon>);
+        pokemons.addAll(list);
         offset += limit;
       });
     } catch (e) {
