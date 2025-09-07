@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/favorites_provider.dart';
-import 'screens/home_screen.dart';
+import 'Providers/favorites_provider.dart';
+import 'Screens/home_screen.dart';
 
 void main() {
-  runApp(const PokedexApp());
+  runApp(const PokedexApp()); 
 }
 
 class PokedexApp extends StatelessWidget {
@@ -12,13 +12,15 @@ class PokedexApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => FavoritesProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FavoritesProvider()), // Provider de favoritos
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Pokédex Explorer',
-        theme: ThemeData(primarySwatch: Colors.red),
-        home: const HomeScreen(),
+        title: 'Pokédex Explorer', // Título do app
+        theme: ThemeData(primarySwatch: Colors.red), // Tema principal
+        home: const HomeScreen(), // Tela inicial
       ),
     );
   }
