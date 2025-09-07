@@ -9,35 +9,49 @@ class DetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Acessa o provider de favoritos para interações e estado
     final favorites = context.watch<FavoritesProvider>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(pokemon.name.toUpperCase()), // Nome do Pokémon
+        title: Text(pokemon.name.toUpperCase()),
         actions: [
           IconButton(
-            // Mostra estrela cheia ou vazia conforme favorito
             icon: Icon(
               favorites.isFavorite(pokemon) ? Icons.star : Icons.star_border,
             ),
-            onPressed: () => favorites.toggleFavorite(pokemon), // Alterna favorito
+            onPressed: () => favorites.toggleFavorite(pokemon),
           )
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.network(pokemon.imageUrl, height: 200), // Imagem do Pokémon
-            const SizedBox(height: 16),
-            Text("Nº ${pokemon.id}", style: const TextStyle(fontSize: 18)), // ID
-            const SizedBox(height: 8),
-            Text(
-              "Tipos: ${pokemon.types.join(", ")}", // Lista de tipos
-              style: const TextStyle(fontSize: 16),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center, // centraliza verticalmente
+            crossAxisAlignment: CrossAxisAlignment.center, // centraliza horizontalmente
+            children: [
+              Image.network(pokemon.imageUrl, height: 200),
+              const SizedBox(height: 16),
+              Text("Nº ${pokemon.id}", style: const TextStyle(fontSize: 18)),
+              const SizedBox(height: 8),
+              Text("Tipos: ${pokemon.types.join(", ")}", style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              Text("Altura: ${pokemon.height / 10} m", style: const TextStyle(fontSize: 16)),
+              Text("Peso: ${pokemon.weight / 10} kg", style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 8),
+              Text("Habilidades: ${pokemon.abilities.join(", ")}", style: const TextStyle(fontSize: 16)),
+              const SizedBox(height: 16),
+              Text(
+                "Estatísticas",
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              ...pokemon.stats.entries.map((e) => Text(
+                    "${e.key.toUpperCase()}: ${e.value}",
+                    style: const TextStyle(fontSize: 16),
+                  )),
+              const SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
